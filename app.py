@@ -1,5 +1,5 @@
 import streamlit as st
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 import numpy as np
 from PIL import Image
 
@@ -7,7 +7,7 @@ from PIL import Image
 st.set_page_config(page_title="Food Decay Detector", page_icon="🍎")
 
 # Load model
-interpreter = tf.lite.Interpreter(model_path="model.tflite")
+interpreter = tflite.Interpreter(model_path="model.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
