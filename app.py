@@ -1,5 +1,5 @@
 import streamlit as st
-import tflite_runtime.interpreter as tflite
+import tensorflow as tf
 import numpy as np
 from PIL import Image
 
@@ -7,11 +7,7 @@ from PIL import Image
 st.set_page_config(page_title="Food Decay Detector", page_icon="🍎")
 
 # Load model
-interpreter = tflite.Interpreter(model_path="model.tflite")
-interpreter.allocate_tensors()
-
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+model = tf.keras.model.load_model("model.h5")
 
 st.title("🍎 Food Decay Detector")
 st.write("Upload an image to check if food is Fresh or Rotten")
@@ -29,14 +25,11 @@ if uploaded_file is not None:
     img_array = np.expand_dims(img_array, axis=0)
 
     # Predict
-    interpreter.set_tensor(input_details[0]['index'], img_array.astype('float32'))
-    interpreter.invoke()
-
-    prediction = interpreter.get_tensor(output_details[0]['index'])
+    prediction = model.predict(img_array)
     confidence = prediction[0][0]
 
+if confidence > 0.5:
+    st.error(f"Rotten ❌ ({confidence:.2f})")
+else:
+    st.success(f"Fresh ✅ ({1-confidence:.2f})")
 
-    if confidence > 0.5:
-        st.error(f"Rotten ❌ ({confidence:.2f})")
-    else:
-        st.success(f"Fresh ✅ ({1-confidence:.2f})")
