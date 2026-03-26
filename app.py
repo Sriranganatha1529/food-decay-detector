@@ -5,9 +5,10 @@ from PIL import Image
 st.set_page_config(page_title="Food Decay Detector", page_icon="🍎")
 
 # Load TFLite model using tf (already available in environment)
-interpreter = tf.lite.Interpreter(model_path="model.tflite")
-interpreter.allocate_tensors()
+from tflite_runtime.interpreter import Interpreter
 
+interpreter = Interpreter(model_path="model.tflite")
+interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
